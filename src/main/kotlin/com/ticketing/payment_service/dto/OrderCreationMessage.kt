@@ -7,5 +7,6 @@ package com.ticketing.payment_service.dto
 data class OrderCreationMessage(
     val orderId: Long,
     val userId: Long,
-    val productId: Long
+    val productId: Long,
+    val seatId: String
 )

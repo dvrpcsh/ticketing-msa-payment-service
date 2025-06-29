@@ -17,11 +17,13 @@ class PaymentKafkaProducer (
     /**
      * '결제 완료' 메시지를 Kafka로 전송합니다.
      */
-    fun sendPaymentResultMessage(orderId:Long, paymentId: String) {
+    fun sendPaymentResultMessage(orderId: Long, paymentId: String, productId: Long, seatId: String) {
         val message = PaymentResultMessage(
             orderId = orderId,
             success =  true,
-            paymentId = paymentId
+            paymentId = paymentId,
+            productId = productId,
+            seatId =  seatId
         )
         kafkaTemplate.send(TOPIC_NAME, message)
     }

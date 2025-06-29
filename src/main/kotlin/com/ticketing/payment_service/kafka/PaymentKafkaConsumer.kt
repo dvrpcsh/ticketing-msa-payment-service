@@ -26,7 +26,7 @@ class PaymentKafkaConsumer (
      * 4.(추후)이 곳에서 실제 결제 처리 로직(PG 연동 등)을 호출
      * 5.결제 성공 시 성공에 대한 메시지를 'payment-completed' 토픽으로 재발행
      */
-    @KafkaListener(topics = ["order-created"], groupId = "payment-group")
+    @KafkaListener(topics = ["order-created-v2"], groupId = "payment-group-v2")
     fun handleOrderCreation(message: OrderCreationMessage) {
         logger.info("결제 시스템: '주문 생성'메시지를 수신했습니다. 결제 처리를 시작합니다. >> ${message}")
 
@@ -40,9 +40,10 @@ class PaymentKafkaConsumer (
         //'결제 완료' 메시지 발행
         paymentKafkaProducer.sendPaymentResultMessage(
             orderId = message.orderId,
-            paymentId = paymentId
+            paymentId = paymentId,
+            productId =  message.productId,
+            seatId =  message.seatId
         )
-
         logger.info("'결제 완료' 메시지를 Kafka로 발행하였습니다.")
     }
 }
