@@ -15,7 +15,7 @@ class KafkaConsumerConfig {
     @Bean
     fun consumerFactory(): ConsumerFactory<String, Any> {
         val props = mutableMapOf<String, Any>()
-        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = "localhost:9092"
+        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = "kafka:9092"
         props[ConsumerConfig.GROUP_ID_CONFIG] = "payment-group-v2"
 
         // 이 그룹이 처음 토픽을 읽거나, 이전에 읽었던 위치(오프셋)를 찾을 수 없을 때,
