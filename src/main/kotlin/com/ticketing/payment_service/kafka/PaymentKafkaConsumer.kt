@@ -30,20 +30,34 @@ class PaymentKafkaConsumer (
     fun handleOrderCreation(message: OrderCreationMessage) {
         logger.info("결제 시스템: '주문 생성'메시지를 수신했습니다. 결제 처리를 시작합니다. >> ${message}")
 
-        //TODO: 결제로직 구현
-        logger.info("결제 처리 중...")
-        Thread.sleep(1000)
+        //주문ID가 홀수면 결제 실패 짝수면 성공하는 로직[결제 실패 및 성공에 대한 로직 테스트 중]
+        if(message.orderId % 2 != 0L) {
+            //결제 실패 처리
+            logger.warn("결제 처리 실패! (주문ID: ${message.orderId}")
+            paymentKafkaProducer.sendPaymentFailureMessage(
+                orderId = message.orderId,
+                productId = message.productId,
+                seatId = message.seatId,
+                reason = "잔액 부족" //가상의 실패 사유
+            )
+            logger.info("'결제 실패'메시지를 Kafka로 발행했습니다")
+        } else {
+            //기존 결제 성공 처리
+            logger.info("결제 처리 중...")
 
-        val paymentId = UUID.randomUUID().toString() //가상의 결제ID 생성
-        logger.info("결제 성공! (Payment ID: ${paymentId}")
+            Thread.sleep(1000)
 
-        //'결제 완료' 메시지 발행
-        paymentKafkaProducer.sendPaymentResultMessage(
-            orderId = message.orderId,
-            paymentId = paymentId,
-            productId =  message.productId,
-            seatId =  message.seatId
-        )
-        logger.info("'결제 완료' 메시지를 Kafka로 발행하였습니다.")
+            val paymentId = UUID.randomUUID().toString() //가상의 결제ID 생성
+            logger.info("결제 성공! (Payment ID: ${paymentId}")
+
+            //'결제 완료' 메시지 발행
+            paymentKafkaProducer.sendPaymentResultMessage(
+                orderId = message.orderId,
+                paymentId = paymentId,
+                productId =  message.productId,
+                seatId =  message.seatId
+            )
+            logger.info("'결제 완료' 메시지를 Kafka로 발행하였습니다.")
+        }
     }
 }

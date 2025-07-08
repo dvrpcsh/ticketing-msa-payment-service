@@ -27,4 +27,18 @@ class PaymentKafkaProducer (
         )
         kafkaTemplate.send(TOPIC_NAME, message)
     }
+
+    /**
+     * '결제 실패'메시지를 Kafka로 전송합니다.
+     */
+    fun sendPaymentFailureMessage(orderId: Long, productId: Long, seatId: String, reason: String) {
+        val message = PaymentResultMessage(
+            orderId = orderId,
+            success = false,
+            reason = reason,
+            productId = productId,
+            seatId = seatId
+        )
+        kafkaTemplate.send(TOPIC_NAME, message)
+    }
 }
